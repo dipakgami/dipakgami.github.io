@@ -52,32 +52,6 @@ $(document).ready(function () {
         getProductVariantsAjax();
     } else {
         loadProductDetails();
-
-        $('.qty-number').keyup(function (e) {
-
-            var charCode = (e.which) ? e.which : event.keyCode
-            if (!String.fromCharCode(charCode).match(/^[0-9,]+$/)) {
-                $(this).val(function (index, value) {
-                    return '';
-                });
-            }
-            if ($(this).val().replaceAll(",", "") > 9900000) {
-                $(this).parent().children('span').remove();
-                $(this).after("<span class='text-secondary'><br/>Max limit:99,00,000 </span>");
-            }
-            else {
-                $(this).parent().children('span').remove();
-            }
-
-            $(this).val(function (index, value) {
-                return value
-                    .replace(/\D/g, '')
-                    .replace(/(\d)(?=(\d\d)+\d$)/g, "$1,")
-                    ;
-            });
-
-
-        });
     }
 
     updateCartCount();
