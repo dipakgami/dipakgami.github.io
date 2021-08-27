@@ -68,6 +68,25 @@
             width: auto;
             height: auto;
         }
+
+        .btn-xs {
+            padding: 1px 10px;
+            font-size: 10px;
+            line-height: 2.5;
+        }
+
+        .btn-xs-edit {
+            padding: 1px 10px;
+            font-size: 10px;
+            line-height: 2.5;
+        }
+
+        .btn-xs-delete {
+            padding: 1px 11px;
+            font-size: 10.5px;
+            line-height: 2.4;
+            margin-top:10px;
+        }
     </style>
 
 </head>
@@ -146,7 +165,7 @@
                             <a href="index.html">Home</a>
                         </li>
                         <li>
-                            <a href="products.html">Categories<span class="tip tip-new tip-top">New</span></a>
+                            <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new tip-top">New</span></a>
                             <div class="megamenu megamenu-fixed-width megamenu-3cols">
                                 <div class="row">
                                     <div class="col-lg-4">
@@ -184,26 +203,6 @@
                 <div class="col-lg-8 main-content">
                     <table class="table table-mini-cart">
                         <tbody id="reviewCart">
-                            <!--<tr>
-                                <td class="product-col">
-                                    <figure class="product-image-container">
-                                        <a href="javascript:" class="product-image">
-                                            <img id="reviewProductImage" src="assets/images/products/product-1.jpg" alt="product">
-                                            <input type="hidden" id="reviewProductID" />
-                                        </a>
-                                    </figure>
-                                    <div class="widget widget-categories">
-                                        <h4 class="widget-title">Blog Categories</h4>
-                                        <ul class="list">
-                                            <li><a href="javascript;">Color: <div style="background-color: red; height: 20px; width: 20px; display: inline-block; margin-bottom: -5px;"></div></a> </li>
-                                            <li><a href="#">RAM: <span class="">128 GB</span></a></li>
-                                            <li><a href="#">Thickness: <span class="">XL</span></a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td class="price-col">Quanitity: <span class="">128</span></td>
-                            </tr>-->
-
                         </tbody>
                     </table>
 
@@ -211,17 +210,25 @@
                 <div class="col-lg-4">
                     <div class="cart-summary">
                         <div class="checkout-methods">
-                            <a href="javascript:" class="btn btn-block btn-sm btn-primary">Submit</a>
+                            <a href="javascript:" onclick="submitOrder()" class="btn btn-block btn-sm btn-primary">Submit</a>
                         </div><!-- End .checkout-methods -->
                         <br />
                         <div class="checkout-methods">
                             <a href="products.html" class="btn btn-block btn-sm btn-primary">Continue to Products</a>
                         </div><!-- End .checkout-methods -->
                         <br />
-                        <div class="">
+                        <div>
                             <a href="javascript:" onclick="clearCart()" class="btn btn-sm btn-block btn-outline-secondary">Clear Cart</a>
                         </div><!-- End .checkout-methods -->
+                        <br />
+                        <div>
+                            <div class="alert alert-success hide" id="msg-container">
+                                <span id="msg"></span> <br />Redirecting to products in <span id="timeLeft">5</span> ...
+                            </div>
+                        </div>
+
                     </div><!-- End .cart-summary -->
+
                 </div><!-- End .col-lg-4 -->
             </div>
 
@@ -300,7 +307,7 @@
                     <p class="footer-copyright py-3 pr-4 mb-0">© Company. 2021. All Rights Reserved</p>
                 </div>
                 <div class="col-xs 6 text-right">
-                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.12</p>
+                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.15</p>
                     <a href="#userAgent" data-toggle="collapse" onclick="getUserAgent()">User Agent</a>
                     <div id="userAgent" class="collapse">
                     </div>
@@ -319,7 +326,7 @@
                 <ul class="mobile-menu mb-3">
                     <li class="active"><a href="index.html">Home</a></li>
                     <li>
-                        <a href="products.html">Categories<span class="tip tip-new">New</span></a>
+                        <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new">New</span></a>
                         <ul id="mobileViewMenuCat">
                         </ul>
                     </li>

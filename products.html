@@ -126,7 +126,7 @@
                             <a href="index.html">Home</a>
                         </li>
                         <li>
-                            <a href="products.html">Categories<span class="tip tip-new tip-top">New</span></a>
+                            <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new tip-top">New</span></a>
                             <div class="megamenu megamenu-fixed-width megamenu-3cols">
                                 <div class="row">
                                     <div class="col-lg-4">
@@ -166,8 +166,9 @@
         <div class="container" style="min-height:510px;">
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index-2.html"><i class="icon-home"></i></a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Products</li>
+                    <li class="breadcrumb-item"><a href="index.html"><i class="icon-home"></i></a></li>
+                    <li class="breadcrumb-item"><a href="products.html">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span id="breadcrumb-selected-category"></span></li>
                 </ol>
             </nav>
 
@@ -293,7 +294,7 @@
                     <p class="footer-copyright py-3 pr-4 mb-0">© Company. 2021. All Rights Reserved</p>
                 </div>
                 <div class="col-xs 6 text-right">
-                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.12</p>
+                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.15</p>
                     <a href="#userAgent" data-toggle="collapse" onclick="getUserAgent()">User Agent</a>
                     <div id="userAgent" class="collapse">
                     </div>
@@ -312,7 +313,7 @@
                 <ul class="mobile-menu mb-3">
                     <li class="active"><a href="index.html">Home</a></li>
                     <li>
-                        <a href="products.html">Categories<span class="tip tip-new">New</span></a>
+                        <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new">New</span></a>
                         <ul id="mobileViewMenuCat">
                         </ul>
                     </li>

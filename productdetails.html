@@ -25,14 +25,56 @@
             wf.async = true;
             s.parentNode.insertBefore(wf, s);
         })(document);
-
     </script>
+    <style>
+        .table-responsive-stack tr {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+
+        .table-responsive-stack td,
+        .table-responsive-stack th {
+            display: block;
+            /*
+        flex-grow | flex-shrink | flex-basis   */
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+        }
+
+        .table-responsive-stack .table-responsive-stack-thead {
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 768px) {
+            .table-responsive-stack tr {
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                flex-direction: column;
+                border-bottom: 3px solid #08C;
+                display: block;
+            }
+            /*  IE9 FIX   */
+            .table-responsive-stack td {
+                float: left\9;
+                width: 100%;
+            }
+        }
+    </style>
+
 
     <!-- Plugins CSS File -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <!-- Main CSS File -->
     <link rel="stylesheet" href="assets/css/style.min.css">
     <link rel="stylesheet" type="text/css" href="assets/vendor/fontawesome-free/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .img-responsive {
             display: block !important;
@@ -73,8 +115,26 @@
             width: auto;
             height: auto;
         }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 34px;
+        }
+
+        .select2-container--default .select2-selection--single {
+            border-radius: 0px;
+            height: 34px;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                top: 5px;
+            }
+
+        .btn-xs {
+            padding: 1px 13px;
+            font-size: 12px;
+            line-height: 2.5;
+        }
     </style>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/all.css" rel="stylesheet">
 
 </head>
 <body>
@@ -152,7 +212,7 @@
                             <a href="index.html">Home</a>
                         </li>
                         <li>
-                            <a href="products.html">Categories<span class="tip tip-new tip-top">New</span></a>
+                            <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new tip-top">New</span></a>
                             <div class="megamenu megamenu-fixed-width megamenu-3cols">
                                 <div class="row">
                                     <div class="col-lg-4">
@@ -238,29 +298,29 @@
 
                                                     </div>
                                                     <div class="col-md-6 text-right">
-                                                        <input type="button" onclick="addRow()" value="Add" class="btn btn-info btn-sm" />
+                                                        <button type="button" onclick="addRow()" id="btnAddRow" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-plus"></i> ADD
+                                                        </button>
                                                     </div>
 
                                                 </div>
                                                 <br />
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead id="tblVariantsHeader">
-                                                        </thead>
-                                                        <tbody id="tblVariantsBody">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+
+                                                <table id="tableOne" class="table table-bordered table-responsive-stack">
+                                                    <thead id="tblVariantsHeader">
+                                                    </thead>
+                                                    <tbody id="tblVariantsBody">
+                                                    </tbody>
+                                                </table>
+
                                                 <br />
                                                 <div class="row">
-                                                    <div class="col-md-6">
 
-                                                    </div>
-                                                    <div class="col-md-6 text-right">
+                                                    <div class="col-md-12 text-center">
                                                         <div class="btn-group">
-                                                            <button type="button" onclick="addToCart()" class="btn col-xs-12 btn-dark add-cart icon-shopping-cart">Add to Cart</button>
+                                                            <button type="button" onclick="addToCart()" class="btn col-xs-12 btn-dark add-cart icon-shopping-cart">Save to Cart</button>
                                                             <div class="btn-group">
-                                                                <button type="button" class="btn col-xs-12 btn-dark add-cart cart-btn" data-toggle="dropdown">
+                                                                <button type="button" class="btn col-sm-12 btn-dark add-cart cart-btn" data-toggle="dropdown">
                                                                 </button>
                                                                 <ul class="dropdown-menu" role="menu">
                                                                     <li style="padding: 10px; min-width: 160px"><a class="icon-shopping-cart" onclick="addToCart('true')" style="color: black; font-size: 1.4rem; font-weight: 700; font-size: 14px;" href="javascript:">&nbsp;Add & Finalize</a></li>
@@ -365,7 +425,7 @@
                     <p class="footer-copyright py-3 pr-4 mb-0">© Company. 2021. All Rights Reserved</p>
                 </div>
                 <div class="col-xs 6 text-right">
-                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.12</p>
+                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.15</p>
                     <a href="#userAgent" data-toggle="collapse" onclick="getUserAgent()">User Agent</a>
                     <div id="userAgent" class="collapse">
                     </div>
@@ -384,7 +444,7 @@
                 <ul class="mobile-menu mb-3">
                     <li class="active"><a href="index.html">Home</a></li>
                     <li>
-                        <a href="products.html">Categories<span class="tip tip-new">New</span></a>
+                        <a href="javascript:" onclick="navigateToProducts('All')">Categories<span class="tip tip-new">New</span></a>
                         <ul id="mobileViewMenuCat">
                         </ul>
                     </li>
@@ -440,7 +500,6 @@
     <!-- Main JS File -->
     <script src="assets/js/main.min.js"></script>
     <script src="js/productdetails.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>

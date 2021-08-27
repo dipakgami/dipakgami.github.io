@@ -118,7 +118,7 @@ function loadSearchCategories(categories) {
     $('#searchCat').html(ddlOptions);
 }
 function loadMobileViewMenuCat(categories) {
-    var mobileViewMenuCat = '';
+    var mobileViewMenuCat = '<li><a href="javascript:" onclick="navigateToProducts(\'All\')" >All Categories</a></li>';
     for (var i = 0; i < categories.length; i++) {
         mobileViewMenuCat += '<li><a href="javascript:" onclick="navigateToProducts(\'' + categories[i] + '\')">' + categories[i] + '</a></li>';
         $('#mobileViewMenuCat').html(mobileViewMenuCat);
@@ -135,14 +135,14 @@ function loadProducts(products) {
 
     var selectedCategory = null;
 
-    selectedCategory = localStorage.getItem("selectedCategory");
+    selectedCategory = sessionStorage.getItem("selectedCategory");
     if (selectedCategory != null && selectedCategory != '' && selectedCategory != "All") {
 
         products = products.filter(function (obj) {
             return (obj[0] === selectedCategory)
         });
     }
-
+    $('#breadcrumb-selected-category').html(selectedCategory);
     var productBlock = '';
     for (var i = 0; i < products.length; i++) {
         productBlock += '<div class="col-6 col-sm-4"><div class="product-default inner-quickview inner-icon"><figure><a onclick="navigateToProductDetails(\'' + products[i][1] + '\')\" href="javascript:"><img src="ProductImages/' + products[i][3] + '"></a><a href="javascript:" class="btn-quickview" onclick="quickView(\'' + products[i][1] + '\')" title="Quick View">Quick View</a></figure><div class="product-details"><div class="category-wrap"><div class="category-list"><a href="javascript:" class="product-category">' + products[i][0] + '</a></div></div><h3 class="product-title"><a onclick="navigateToProductDetails("' + products[i][1] + '")" href="javascript:">' + products[i][2] + '</a></h3></div></div></div>';
@@ -161,7 +161,7 @@ function quickView(productID) {
     $('#quickView').modal('show');
 }
 function navigateToProductDetails(productID) {
-    localStorage.setItem("selectedProductID", productID);
+    sessionStorage.setItem("selectedProductID", productID);
     window.location.href = "productdetails.html";
 }
 function clearCart() {
@@ -185,6 +185,6 @@ function updateCartCount() {
 }
 
 function navigateToProducts(Category) {
-    localStorage.setItem("selectedCategory", Category);
+    sessionStorage.setItem("selectedCategory", Category);
     window.location.href = "products.html";
 }

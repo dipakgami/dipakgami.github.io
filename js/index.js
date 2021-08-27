@@ -104,7 +104,7 @@ function loadSearchCategories(categories) {
     $('#searchCat').html(ddlOptions);
 }
 function loadMobileViewMenuCat(categories) {
-    var mobileViewMenuCat = '';
+    var mobileViewMenuCat = '<li><a href="javascript:" onclick="navigateToProducts(\'All\')" >All Categories</a></li>';
     for (var i = 0; i < categories.length; i++) {
         var encodedURL = encodeURIComponent(categories[i]);
         mobileViewMenuCat += '<li><a href="javascript:" onclick="navigateToProducts(\'' + categories[i] + '\')">' + categories[i] + '</a></li>';
@@ -157,7 +157,7 @@ function quickView(productID) {
     $('#quickView').modal('show');
 }
 function navigateToProductDetails(productID) {
-    localStorage.setItem("selectedProductID", productID);
+    sessionStorage.setItem("selectedProductID", productID);
     window.location.href = "productdetails.html";
 }
 
@@ -179,6 +179,6 @@ function updateCartCount() {
 }
 
 function navigateToProducts(Category) {
-    localStorage.setItem("selectedCategory", Category);
+    sessionStorage.setItem("selectedCategory", Category);
     window.location.href = "products.html";
 }
