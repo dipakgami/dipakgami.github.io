@@ -100,30 +100,6 @@ function getProductVariantsAjax() {
             localStorage.setItem("productVariantsResult", JSON.stringify(productVariantsResult));
             loadProductDetails();
 
-            $('.qty-number').keyup(function (e) {
-                var charCode = (e.which) ? e.which : event.keyCode
-                if (!String.fromCharCode(charCode).match(/^[0-9,]+$/)) {
-                    $(this).val(function (index, value) {
-                        return '';
-                    });
-                }
-                if ($(this).val().replaceAll(",", "") > 9900000) {
-                    $(this).parent().children('span').remove();
-                    $(this).after("<span class='text-secondary'><br/>Max limit:99,00,000 </span>");
-                }
-                else {
-                    $(this).parent().children('span').remove();
-                }
-
-                $(this).val(function (index, value) {
-                    return value
-                        .replace(/\D/g, '')
-                        .replace(/(\d)(?=(\d\d)+\d$)/g, "$1,")
-                        ;
-                });
-
-            });
-
         }
     });
 }
@@ -149,7 +125,7 @@ function loadSearchCategories(categories) {
     $('#searchCat').html(ddlOptions);
 }
 function loadMobileViewMenuCat(categories) {
-    var mobileViewMenuCat = '';
+    var mobileViewMenuCat = '<li><a href="javascript:" onclick="navigateToProducts(\'All\')" >All Categories</a></li>';
     for (var i = 0; i < categories.length; i++) {
         var encodedURL = encodeURIComponent(categories[i]);
         mobileViewMenuCat += '<li><a href="javascript:" onclick="navigateToProducts(\'' + categories[i] + '\')">' + categories[i] + '</a></li>';
@@ -158,9 +134,15 @@ function loadMobileViewMenuCat(categories) {
 }
 function loadProductDetails() {
 
-    var productID = localStorage.getItem("selectedProductID");
+    var productID = "";
+    if (sessionStorage.getItem("cartProductToEdit") != null && sessionStorage.getItem("cartProductToEdit") != '') {
+        productID = sessionStorage.getItem("cartProductToEdit");
+    } else {
+        productID = sessionStorage.getItem("selectedProductID");
+    }
 
     if (productID != null) {
+
         $('#hdnProductID').val(productID);
 
         var product = productResult.filter(function (obj) {
@@ -174,10 +156,6 @@ function loadProductDetails() {
         $('#productDetailImage').attr('src', 'ProductImages/' + product[0][3]);
         $('#productDetailProductName').html(product[0][2]);
         $('#productDetailProductDescription').html(product[0][4]);
-
-        var colorBlock = '';
-
-        var variantsArray = [];
 
         for (var i = 0; i < productDetails.length; i++) {
             var isUniqueVariant = true;
@@ -194,18 +172,60 @@ function loadProductDetails() {
 
         var variantTableHeaderBlock = '<tr>';
 
+
         variantCollection.filter(function (obj) {
-            variantTableHeaderBlock += '<th>' + obj + '</th>';
+            variantTableHeaderBlock += '<th class="">' + obj + '</th>';
         });
-        variantTableHeaderBlock += '<th style="width:115px">Quantity</th><th>Action</th></tr>';
+
+        if (variantCollection.length > 0) {
+            variantTableHeaderBlock += '<th class="" style="width:115px">Quantity</th><th class="text-center">Delete</th></tr>';
+        }
+        else {
+            variantTableHeaderBlock += '<th class="" style="width:115px">Quantity</th></tr>';
+            $('#btnAddRow').addClass('hide');
+        }
+
+
         $('#tblVariantsHeader').html(variantTableHeaderBlock);
-        addRow();
+
+        if (sessionStorage.getItem("cartProductToEdit") != null && sessionStorage.getItem("cartProductToEdit") != '') {
+
+            var productIDtoEdit = sessionStorage.getItem("cartProductToEdit");
+            var existingCart = JSON.parse(localStorage.getItem("cart"));
+            existingCart = existingCart.filter(function (obj) {
+                return (obj.ProductID === productIDtoEdit)
+            });
+
+            for (var i = 0; i < existingCart.length; i++) {
+                addRow();
+                var existingCartItem = existingCart[i];
+
+                var trow = $('#tblVariantsBody tr')[i];
+                $(trow).find('td').each(function (ind, obj) {
+
+                    if ($(obj).attr('data-variant') == "quantity") {
+                        $(obj).find("input").val(existingCartItem.Quantity)
+                    }
+                    else if ($(obj).attr('data-variant') != null) {
+                        var existingCartItemVariant = existingCartItem.cartItemVariant[$(obj).attr('data-variant')];
+                        $(obj).find('select').val(existingCartItemVariant);
+                    }
+                });
+                responsiveTable();
+                initalizeSelect2();
+            }
+        }
+        else {
+            addRow();
+        }
+        sessionStorage.setItem("cartProductToEdit", '');
     }
 }
 
 function addRow() {
 
-    var productID = localStorage.getItem("selectedProductID");
+    var productID = $('#hdnProductID').val();
+
     var productDetails = productVariantsResult.filter(function (obj) {
         return (obj[0] === productID)
     });
@@ -226,12 +246,18 @@ function addRow() {
     var variantTableTrBlock = '<tr>';
 
     variantCollection.filter(function (obj) {
-        var variantTableTdBlock = '<td data-variant="' + obj + '"><select type="dropdown" style="height:34px"><option value="0">Select one</option>';
+
+        var variantTableTdBlock = '';
+        if (obj == "Color") {
+            variantTableTdBlock = '<td class="" data-variant="' + obj + '"><select class="custom-ddl-color" type="dropdown" style="height:34px"><option value="">Select one</option>';
+        } else {
+            variantTableTdBlock = '<td class="" data-variant="' + obj + '"><select class="custom-ddl" type="dropdown" style="height:34px;"><option value="">Select one</option>';
+        }
 
         productDetails.filter(function (obj2) {
             if (obj == obj2[3]) {
                 if (obj == "Color") {
-                    variantTableTdBlock += '<option class="fa" style="color:' + obj2[2] + '" value="' + obj2[2] + '"><span>&#xf111;</span> ' + obj2[4] + '</span></option>';
+                    variantTableTdBlock += '<option value="' + obj2[2] + '">' + obj2[4] + '</option>';
                 }
                 else {
                     variantTableTdBlock += '<option value="' + obj2[2] + '">' + obj2[4] + '</option>';
@@ -242,36 +268,57 @@ function addRow() {
         variantTableTrBlock += variantTableTdBlock;
     });
 
-    variantTableTrBlock += '<td data-variant="quantity"><input type="text" class="form-input qty-number" style="height:34px; width:115px" placeholder="Quantity"></td><td class="text-center"><input onclick="removeRow(this)" type="button" class="removeRow" value="X"/> </td></tr>';
+    if (variantCollection.length > 0) {
+        variantTableTrBlock += '<td class="" data-variant="quantity"><input type="number" class="form-input qty-number" style="height:34px;" placeholder="Quantity"></td><td class="text-center"><button onclick="removeRow(this)" type="button" class="btn btn-danger btn-xs removeRow"><i class="fa fa-trash"></i></button> </td></tr>';
+    }
+    else {
+        variantTableTrBlock += '<td class="text-center" data-variant="quantity"><input type="number" class="form-input qty-number" style="height:34px;" placeholder="Quantity"></td></tr>';
+
+    }
+
 
     $('#tblVariantsBody').append(variantTableTrBlock);
 
 
     if ($('#tblVariantsBody tr').length == 1) {
-        $('.removeRow').attr('disabled', 'disabled');
+        $('.removeRow').addClass('hide');
     }
     else {
-        $($('.removeRow')[0]).removeAttr('disabled')
+        $($('.removeRow')[0]).removeClass('hide');
     }
+    responsiveTable();
+    initalizeSelect2();
+
 }
 
 function removeRow(current) {
-    $(current).closest('tr').remove();
-    if ($('#tblVariantsBody tr').length == 1) {
-        $('.removeRow').attr('disabled', 'disabled');
+    if (confirm("Are you sure?")) {
+        $(current).closest('tr').remove();
+        if ($('#tblVariantsBody tr').length == 1) {
+            $($('.removeRow')[0]).addClass('hide');
+        }
     }
 }
 
 function addToCart(finalize) {
     var isValid = true;
+    var isDuplicate = false;
     var cartObj = [];
 
-   
     $("#tblVariantsBody tr").each(function (index, object) {
 
         var cartItem = {};
         var cartItemVariant = {};
         cartItem["ProductID"] = $('#hdnProductID').val();
+
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        today = dd + '/' + mm + '/' + yyyy;
+        cartItem["CreatedDate"] = today;
+        cartItem["CartRowIndex"] = '';
+
         $(object).find('td').each(function (ind, obj) {
 
             if ($(obj).attr('data-variant') == "quantity") {
@@ -284,8 +331,7 @@ function addToCart(finalize) {
                 }
             }
             else if ($(obj).attr('data-variant') != null) {
-
-                if ($(obj).find("select").val() != null && $(obj).attr('data-variant') != "") {
+                if ($(obj).find("select").val() != null && $(obj).find("select").val() != "" && $(obj).attr('data-variant') != "") {
                     cartItemVariant[$(obj).attr('data-variant')] = $(obj).find("select").val();
                 }
                 else {
@@ -299,11 +345,42 @@ function addToCart(finalize) {
 
     });
 
+    var compareToIndex = 0;
+
+    cartObj.filter(function (obj) {
+
+        var compareWithIndex = 0;
+        cartObj.filter(function (obj2) {
+            if (compareToIndex != compareWithIndex) {
+                if (JSON.stringify(obj.cartItemVariant) == JSON.stringify(obj2.cartItemVariant)) {
+                    isDuplicate = true;
+                    isValid = false;
+
+                }
+            }
+
+            compareWithIndex = compareWithIndex + 1;
+        })
+        compareToIndex = compareToIndex + 1;
+    })
+
+
 
     if (isValid) {
 
         if (localStorage.getItem("cart") != null && localStorage.getItem("cart") != '') {
-            cartObj = cartObj.concat(JSON.parse(localStorage.getItem("cart")));
+
+            var existingCart = JSON.parse(localStorage.getItem("cart"));
+
+            existingCart = existingCart.filter(function (obj) {
+                return obj.ProductID != $('#hdnProductID').val();
+            });
+
+            cartObj = cartObj.concat(existingCart);
+        }
+
+        for (var i = 0; i < cartObj.length; i++) {
+            cartObj[i].CartRowIndex = i;
         }
 
         localStorage.setItem("cart", JSON.stringify(cartObj));
@@ -314,16 +391,22 @@ function addToCart(finalize) {
         $('#validationMsg').removeClass('alert alert-danger');
         $('#validationMsg').addClass('alert alert-success');
         $('#validationMsg').html('Item added..')
-        $('#validationMsg').fadeIn('fast').delay(2000);
-        $('#validationMsg').fadeOut('slow').delay(3000).hide(0);
     }
     else {
+
         $('#validationMsg').removeClass('alert alert-success');
         $('#validationMsg').addClass('alert alert-danger');
-        $('#validationMsg').html('Select all options..')
-        $('#validationMsg').fadeIn('fast').delay(2000);
-        $('#validationMsg').fadeOut('slow').delay(3000).hide(0);
+
+        if (isDuplicate) {
+            $('#validationMsg').html('Duplicate variants selected..')
+        }
+        else {
+            $('#validationMsg').html('Select all options..')
+        }
+
     }
+    $('#validationMsg').fadeIn('fast').delay(2000);
+    $('#validationMsg').fadeOut('slow').delay(3000).hide(0);
     updateCartCount();
 }
 function updateCartCount() {
@@ -337,6 +420,74 @@ function updateCartCount() {
 }
 
 function navigateToProducts(Category) {
-    localStorage.setItem("selectedCategory", Category);
+    sessionStorage.setItem("selectedCategory", Category);
     window.location.href = "products.html";
 }
+
+function responsiveTable() {
+
+    // inspired by http://jsfiddle.net/arunpjohny/564Lxosz/1/
+    $('.table-responsive-stack').each(function (i) {
+        var id = $(this).attr('id');
+        //alert(id);
+        $(this).find("th").each(function (i) {
+            $('#' + id + ' td:nth-child(' + (i + 1) + ')').find('.table-responsive-stack-thead').remove();
+            if ($(this).text() != "Delete") {
+                $('#' + id + ' td:nth-child(' + (i + 1) + ')').prepend('<span class="table-responsive-stack-thead" style="width: 40%; display:inline-block">' + $(this).text() + ':</span> ');
+            }
+        });
+    });
+
+    $('.table-responsive-stack').each(function () {
+        var thCount = $(this).find("th").length;
+        var rowGrow = 100 / thCount + '%';
+        //console.log(rowGrow);
+        $(this).find("th, td").css('flex-basis', rowGrow);
+    });
+
+    function flexTable() {
+        if ($(window).width() < 768) {
+
+            $(".table-responsive-stack").each(function (i) {
+                $(this).find(".table-responsive-stack-thead").show();
+                $(this).find('thead').hide();
+            });
+            $($('.table-responsive-stack').find('.select2')).each(function (ind, obj) { $(obj).css('width', '50%') })
+            $($('.table-responsive-stack').find('input[type=number]')).each(function (ind, obj) { $(obj).css('width', '50%') })
+
+        } else {
+            $(".table-responsive-stack").each(function (i) {
+                $(this).find(".table-responsive-stack-thead").hide();
+                $(this).find('thead').show();
+            });
+
+            $($('.table-responsive-stack').find('.select2')).each(function (ind, obj) { $(obj).css('width', '100%') })
+            $($('.table-responsive-stack').find('input[type=number]')).each(function (ind, obj) { $(obj).css('width', '100%') })
+        }
+        // flextable   
+    }
+
+    flexTable();
+
+    window.onresize = function (event) {
+        flexTable();
+    };
+    // document ready  
+
+}
+function initalizeSelect2() {
+    $('.custom-ddl-color').select2({
+        templateResult: formatState
+    });
+    $('.custom-ddl').select2();
+}
+function formatState(state) {
+    if (!state.id) {
+        return state.text;
+    }
+    var baseUrl = "/user/pages/images/flags";
+    var $state = $(
+        '<span><i class="fa fa-square" style="font-size:20px; color:' + state.element.value.toLowerCase() + '" /> ' + state.text + '</span>'
+    );
+    return $state;
+};

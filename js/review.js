@@ -123,7 +123,7 @@ function loadSearchCategories(categories) {
     $('#searchCat').html(ddlOptions);
 }
 function loadMobileViewMenuCat(categories) {
-    var mobileViewMenuCat = '';
+    var mobileViewMenuCat = '<li><a href="javascript:" onclick="navigateToProducts(\'All\')" >All Categories</a></li>';
     for (var i = 0; i < categories.length; i++) {
         var encodedURL = encodeURIComponent(categories[i]);
         mobileViewMenuCat += '<li><a href="javascript:" onclick="navigateToProducts(\'' + categories[i] + '\')">' + categories[i] + '</a></li>';
@@ -133,7 +133,7 @@ function loadMobileViewMenuCat(categories) {
 function loadReviewCart() {
     var cartObj = [];
 
-    if (localStorage.getItem("cart") != null && localStorage.getItem("cart") != '') {
+    if (localStorage.getItem("cart") != null && localStorage.getItem("cart") != '' && localStorage.getItem("cart") != "[]") {
         cartObj = JSON.parse(localStorage.getItem("cart"));
 
         var cartItemBlock = '';
@@ -142,7 +142,7 @@ function loadReviewCart() {
             var product = productResult.filter(function (obj) {
                 return (obj[1] == cartObj[i].ProductID);
             });
-            cartItemBlock += '<tr><td class="product-col"><figure class="product-image-container"><a href="javascript:" class="product-image"> <img id="reviewProductImage" src="ProductImages/' + product[0][3] + '" alt="product"> <input type="hidden" id="reviewProductID" /> </a> </figure> <div class="widget widget-categories"> <h4 class="widget-title">' + product[0][2] + '</h4> <ul class="list">@@VariantOptions</div> </td>  <td class="price-col">Quanitity: <span class="">' + cartObj[i].Quantity + '</span></td>  </tr>';
+            cartItemBlock += '<tr><td class="product-col"><figure class="product-image-container"><a href="javascript:" class="product-image"> <img id="reviewProductImage" src="ProductImages/' + product[0][3] + '" alt="product"> <input type="hidden" id="reviewProductID" /> </a> </figure> <div class="widget widget-categories"> <h4 class="widget-title">' + product[0][2] + '</h4> <ul class="list">@@VariantOptions</div> </td>  <td class="price-col">Quanitity: <span class="">' + cartObj[i].Quantity + '</span></td><td style="vertical-align:bottom"><button onclick="editCart(\'' + product[0][1] + '\')" class="btn btn-xs-edit btn-info" type="button"><i class="fa fa-edit"></i></button><br/><button onclick="deleteCartRow(\'' + cartObj[i].CartRowIndex + '\')" class="btn btn-xs-delete btn-danger" type="button"><i class="fa fa-trash"></i></button></td></tr>';
 
             var variantList = $.map(cartObj[i].cartItemVariant, function (value, key) {
                 return [[key, value]];
@@ -154,15 +154,16 @@ function loadReviewCart() {
                 var currentVariant = productVariantsResult.filter(function (obj) {
                     return (obj[2] == variantList[j][1] && obj[0] == cartObj[i].ProductID);
                 });
-                debugger;
+
                 if (variantList[j][0] == "Color") {
-                     
-                    variantBlock += '<li><a href="javascript:">Color:  <span class="">' + currentVariant[0][4] + '</span> | <div style="background-color: ' + variantList[j][1] + '; height: 17px; width: 17px; border-radius:17px; display: inline-block; margin-bottom: -5px;"></div></a> </li>';
+
+                    variantBlock += '<li><a href="javascript:">Color:  <span class="">' + currentVariant[0][4] + '</span> | <div style="background-color: ' + variantList[j][1] + '; height: 20px; width: 20px; display: inline-block; margin-bottom: -5px;"></div></a> </li>';
                 }
                 else {
                     variantBlock += '<li><a href="javascript:">' + variantList[j][0] + ': <span class="">' + currentVariant[0][4] + '</span></a></li>';
                 }
             }
+            variantBlock += '<li><a href="javascript:">Created Date: <span class="">' + cartObj[i].CreatedDate + '</span></a></li>';
             cartItemBlock = cartItemBlock.replace("@@VariantOptions", variantBlock);
         }
 
@@ -177,6 +178,16 @@ function clearCart() {
     localStorage.setItem("cart", '');
     $('#reviewCart').html('<tr><td  colspan="3">No Items..</td></tr>');
     updateCartCount();
+    $("#msg-container").removeClass('hide');
+    $("#msg").html('Cart cleared...')
+    window.setInterval(function () {
+        var timeLeft = $("#timeLeft").html();
+        if (eval(timeLeft) == 0) {
+            window.location.href = "products.html";
+        } else {
+            $("#timeLeft").html(eval(timeLeft) - eval(1));
+        }
+    }, 1000);
 }
 function getUserAgent() {
     var txt = navigator.userAgent;
@@ -195,6 +206,37 @@ function updateCartCount() {
 }
 
 function navigateToProducts(Category) {
-    localStorage.setItem("selectedCategory", Category);
+    sessionStorage.setItem("selectedCategory", Category);
     window.location.href = "products.html";
+}
+function submitOrder() {
+
+    $("#msg-container").removeClass('hide');
+    $("#msg").html('Submitted successfully...')
+    window.setInterval(function () {
+        var timeLeft = $("#timeLeft").html();
+        if (eval(timeLeft) == 0) {
+            window.location.href = "products.html";
+        } else {
+            $("#timeLeft").html(eval(timeLeft) - eval(1));
+        }
+    }, 1000);
+}
+function editCart(ProductID) {
+    sessionStorage.setItem('cartProductToEdit', ProductID);
+    window.location.href = "productdetails.html"
+}
+function deleteCartRow(cartRowIndex) {
+
+    if (confirm("Are you sure?")) {
+
+        var cartObj = JSON.parse(localStorage.getItem("cart"));
+        cartObj = cartObj.filter(function (obj) {
+            return obj.CartRowIndex != cartRowIndex;
+        })
+        localStorage.setItem("cart", JSON.stringify(cartObj));
+        loadReviewCart();
+        updateCartCount();
+    }
+
 }
