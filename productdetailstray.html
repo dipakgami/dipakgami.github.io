@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Company - Catalogue</title>
+
+    <meta name="keywords" content="Catalogue" />
+    <meta name="description" content="Catalogue">
+    <meta name="author" content="SW-THEMES">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
+
+    <script type="text/javascript">
+        WebFontConfig = {
+            google: { families: ['Open+Sans:300,400,600,700,800', 'Poppins:300,400,500,600,700', 'Shadows+Into+Light:400'] }
+        };
+        (function (d) {
+            var wf = d.createElement('script'), s = d.scripts[0];
+            wf.src = 'assets/js/webfont.js';
+            wf.async = true;
+            s.parentNode.insertBefore(wf, s);
+        })(document);
+    </script>
+    <style>
+        .table-responsive-stack tr {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+
+        .table-responsive-stack td,
+        .table-responsive-stack th {
+            display: block;
+            /*
+        flex-grow | flex-shrink | flex-basis   */
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+        }
+
+        .table-responsive-stack .table-responsive-stack-thead {
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 768px) {
+            .table-responsive-stack tr {
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                flex-direction: column;
+                display: block;
+            }
+
+                .table-responsive-stack tr .last-odd {
+                    border-bottom: 3px solid #08C;
+                }
+            /*  IE9 FIX   */
+            /*  .table-responsive-stack td {
+                float: left\9;
+                width: 100%;
+            }*/
+            /*  IE9 FIX   */
+            .table-responsive-stack td {
+                float: left;
+                width: 50%;
+            }
+
+                .table-responsive-stack td.last-odd {
+                    float: left;
+                    width: 100%;
+                }
+        }
+    </style>
+
+
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <style>
+        .img-responsive {
+            display: block !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        .inline-list li {
+            display: inline;
+            padding: 0px 5px;
+        }
+
+        .custom-control {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-btn:after {
+            content: "\e81c";
+            border: 0;
+            margin: -5px 2px 0 11px;
+            font-size: 15px;
+            font-family: porto;
+            width: auto;
+            height: auto;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .dropdown-arrow:after {
+            content: none;
+            border: 0;
+            margin: -5px 2px 0 11px;
+            font-size: 15px;
+            font-family: porto;
+            width: auto;
+            height: auto;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 34px;
+        }
+
+        .select2-container--default .select2-selection--single {
+            border-radius: 0px;
+            height: 34px;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                top: 5px;
+            }
+
+        .btn-xs {
+            padding: 1px 13px;
+            font-size: 12px;
+            line-height: 2.5;
+        }
+        /* Extra small devices (phones, 600px and down) */
+        @media only screen and (max-width: 600px) {
+            .delete-modal-sm {
+                width: 100%;
+            }
+
+            #confirmDelete {
+                padding-right: 10% !important;
+                padding-left: 10% !important;
+            }
+        }
+
+        /* Small devices (portrait tablets and large phones, 600px and up) */
+        @media only screen and (min-width: 600px) {
+            .delete-modal-sm {
+                width: 100%;
+            }
+
+            #confirmDelete {
+                padding-right: 10% !important;
+                padding-left: 10% !important;
+            }
+        }
+
+        /* Medium devices (landscape tablets, 768px and up) */
+        @media only screen and (min-width: 768px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
+        }
+
+        /* Large devices (laptops/desktops, 992px and up) */
+        @media only screen and (min-width: 992px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
+        }
+
+        /* Extra large devices (large laptops and desktops, 1200px and up) */
+        @media only screen and (min-width: 1200px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <main class="main">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12 main-content">
+                    <div class="product-single-container product-single-default">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="product-single-details">
+                                    <h1 class="product-title" id="productDetailProductName"> </h1>
+                                    <input type="hidden" id="hdnProductID" />
+                                    <div class="product-filters-container">
+                                        <hr class="divider">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+
+                                                    </div>
+                                                    <div class="col-md-6 text-right">
+                                                        <button type="button" onclick="addRow()" id="btnAddRow" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-plus"></i> ADD
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                                <br />
+
+                                                <table id="tableOne" class="table table-bordered table-responsive-stack">
+                                                    <thead id="tblVariantsHeader">
+                                                    </thead>
+                                                    <tbody id="tblVariantsBody">
+                                                    </tbody>
+                                                </table>
+
+                                                <br />
+                                                <div class="row">
+
+                                                    <div class="col-md-12 text-center">
+                                                        <div class="btn-group">
+                                                            <button type="button" onclick="addToCart()" class="btn col-xs-12 btn-dark add-cart icon-shopping-cart">Save to Cart</button>
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn col-sm-12 btn-dark add-cart cart-btn" data-toggle="dropdown">
+                                                                </button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li style="padding: 10px; min-width: 160px"><a class="icon-shopping-cart" onclick="addToCart('iframe-true')" style="color: black; font-size: 1.4rem; font-weight: 700; font-size: 14px;" href="javascript:">&nbsp;Add & Finalize</a></li>
+                                                                </ul>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- End .product-action -->
+                                        <br />
+                                        <div id="validationMsg" style="display:none"> </div>
+
+                                    </div><!-- End .product-filters-container -->
+                                </div><!-- End .product-single-details -->
+                            </div><!-- End .col-lg-5 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .product-single-container -->
+
+                </div><!-- End .col-lg-9 -->
+            </div>
+
+        </div><!-- End .container -->
+
+        <div class="mb-3"></div><!-- margin -->
+    </main><!-- End .main -->
+    <!-- End .mobile-menu-container -->
+
+    <div class="modal fade" id="confirmDelete" role="dialog" style="background-color:rgba(0,0,0,0.7)">
+        <div class="modal-dialog delete-modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row row-sparse">
+                        <div class="col-xs-12">
+                            <h6>Are you sure to delete?</h6>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs btn-danger" onclick="removeRow()">Delete</button>
+                                </div>
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="hdnValueToDelete" />
+                        </div><!-- End .product-single-gallery -->
+                    </div><!-- End .row -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Plugins JS File -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/plugins.min.js"></script>
+    <!-- Main JS File -->
+    <script src="assets/js/main.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/productdetails.js"></script>
+    <script src="assets/js/select2.min.js"></script>
+</body>
+</html>
