@@ -85,7 +85,55 @@
             padding: 1px 11px;
             font-size: 10.5px;
             line-height: 2.4;
-            margin-top:10px;
+            margin-top: 10px;
+        }
+
+        .list li a {
+            padding: 0.5rem 0 .5rem 2rem !important;
+        }
+        /* Extra small devices (phones, 600px and down) */
+        @media only screen and (max-width: 600px) {
+            .delete-modal-sm {
+                width: 100%;
+            }
+
+            #confirmDelete {
+                padding-right: 10% !important;
+                padding-left: 10% !important;
+            }
+        }
+
+        /* Small devices (portrait tablets and large phones, 600px and up) */
+        @media only screen and (min-width: 600px) {
+            .delete-modal-sm {
+                width: 100%;
+            }
+
+            #confirmDelete {
+                padding-right: 10% !important;
+                padding-left: 10% !important;
+            }
+        }
+
+        /* Medium devices (landscape tablets, 768px and up) */
+        @media only screen and (min-width: 768px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
+        }
+
+        /* Large devices (laptops/desktops, 992px and up) */
+        @media only screen and (min-width: 992px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
+        }
+
+        /* Extra large devices (large laptops and desktops, 1200px and up) */
+        @media only screen and (min-width: 1200px) {
+            .delete-modal-sm {
+                width: 30%;
+            }
         }
     </style>
 
@@ -195,7 +243,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html"><i class="icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="products.html">Products</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Review</li>
+                    <li class="breadcrumb-item active" aria-current="page"><span id="activeBreadCrumb">Review</span> </li>
                 </ol>
             </nav>
 
@@ -203,6 +251,7 @@
                 <div class="col-lg-8 main-content">
                     <table class="table table-mini-cart">
                         <tbody id="reviewCart">
+                            <tr><td>Loading...</td></tr>
                         </tbody>
                     </table>
 
@@ -210,15 +259,20 @@
                 <div class="col-lg-4">
                     <div class="cart-summary">
                         <div class="checkout-methods">
-                            <a href="javascript:" onclick="submitOrder()" class="btn btn-block btn-sm btn-primary">Submit</a>
+                            <a href="javascript:" onclick="submitOrder()" id="btnSubmitOrder" class="btn btn-block btn-sm btn-primary">Submit</a>
                         </div><!-- End .checkout-methods -->
                         <br />
                         <div class="checkout-methods">
-                            <a href="products.html" class="btn btn-block btn-sm btn-primary">Continue to Products</a>
+                            <a href="products.html" id="btnContinueToProducts" class="btn btn-block btn-sm btn-primary">Continue to Products</a>
                         </div><!-- End .checkout-methods -->
                         <br />
                         <div>
-                            <a href="javascript:" onclick="clearCart()" class="btn btn-sm btn-block btn-outline-secondary">Clear Cart</a>
+                            <a href="javascript:" id="btnShowCurrentCart" onclick="switchCart(false)" class="btn btn-sm btn-block btn-outline-secondary hide">Show Current Cart</a>
+                            <a href="javascript:" id="btnShowPreviousCart" onclick="switchCart(true)" class="btn btn-sm btn-block btn-outline-secondary">Show Previous Cart</a>
+                        </div><!-- End .checkout-methods -->
+                        <br />
+                        <div>
+                            <a href="javascript:" id="btnClearCart" onclick="confirmClearCart()" class="btn btn-sm btn-block btn-outline-secondary">Clear Cart(s)</a>
                         </div><!-- End .checkout-methods -->
                         <br />
                         <div>
@@ -307,7 +361,7 @@
                     <p class="footer-copyright py-3 pr-4 mb-0">© Company. 2021. All Rights Reserved</p>
                 </div>
                 <div class="col-xs 6 text-right">
-                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.15</p>
+                    <p class="footer-copyright py-3 pr-4 mb-0">v 1.21</p>
                     <a href="#userAgent" data-toggle="collapse" onclick="getUserAgent()">User Agent</a>
                     <div id="userAgent" class="collapse">
                     </div>
@@ -341,46 +395,63 @@
         </div><!-- End .mobile-menu-wrapper -->
     </div><!-- End .mobile-menu-container -->
 
-    <div class="modal fade" id="quickView" role="dialog">
-        <div class="modal-dialog">
+    <div class="modal fade" id="confirmDelete" role="dialog" style="background-color:rgba(0,0,0,0.7)">
+        <div class="modal-dialog delete-modal-sm">
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="row row-sparse">
-                        <div class="col-lg-6">
-                            <div class="">
-                                <div class="product-item">
-                                    <img class="product-single-image" id="quickViewProductImage" />
+                        <div class="col-xs-12">
+                            <h6>Are you sure to delete?</h6>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs btn-danger" onclick="deleteCartRow()">Delete</button>
                                 </div>
-                                <!-- End .product-single-carousel -->
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs" data-dismiss="modal">Cancel</button>
+                                </div>
                             </div>
-
+                            <input type="hidden" id="hdnValueToDelete" />
                         </div><!-- End .product-single-gallery -->
-
-                        <div class="col-lg-6 product-single-details">
-                            <h1 class="product-title" id="quickViewProductName">Product Name</h1>
-                            <hr class="divider">
-                            <div class="product-desc">
-                                <p id="quickViewProductDescription"></p>
-                            </div><!-- End .product-desc -->
-                        </div><!-- End .product-single-details -->
                     </div><!-- End .row -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <div class="modal fade" id="confirmClearCart" role="dialog" style="background-color:rgba(0,0,0,0.7)">
+        <div class="modal-dialog delete-modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row row-sparse">
+                        <div class="col-xs-12">
+                            <h6>Are you sure to clear cart(s)?</h6>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs btn-danger" onclick="clearCart()">Clear</button>
+                                </div>
+                                <div class="col-xs-6">
+                                    <button type="button" class="btn btn-xs" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div><!-- End .product-single-gallery -->
+                    </div><!-- End .row -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <!-- Plugins JS File -->
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/optional/isotope.pkgd.min.js"></script>
     <script src="assets/js/plugins.min.js"></script>
     <!-- Main JS File -->
     <script src="assets/js/main.min.js"></script>
+    <script src="js/common.js"></script>
     <script src="js/review.js"></script>
 </body>
 </html>
